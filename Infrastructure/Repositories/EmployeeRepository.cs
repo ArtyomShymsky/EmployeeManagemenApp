@@ -66,9 +66,9 @@ namespace Infrastructure.Repositories
                 employee.Email,
                 employee.DateOfBirth,
                 employee.Salary,
-                //DepartmentId = employee.DepartmentId ?? (object)DBNull.Value,
-                //Position = employee.Position ?? (object)DBNull.Value,
-                //HireDate = employee.HireDate,
+                DepartmentId = employee.DepartmentId ?? (object)DBNull.Value,
+                Position = employee.Position ?? (object)DBNull.Value,
+                HireDate = employee.HireDate,
                 CreatedDate = DateTime.UtcNow,
                 ModifiedDate = DateTime.UtcNow
             };

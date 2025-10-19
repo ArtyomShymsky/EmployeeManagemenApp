@@ -26,7 +26,7 @@ namespace Infrastructure.Data
             {
                 CreateDatabaseIfNotExists();
                 CreateTablesIfNotExist();
-                SeedInitialData();
+                //SeedInitialData();
                 return true;
             }
             catch (Exception ex)
@@ -73,13 +73,13 @@ namespace Infrastructure.Data
                 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Employees' AND xtype='U')
                 CREATE TABLE Employees (
                     EmployeeID INT PRIMARY KEY IDENTITY(1,1),
-                    FirstName NVARCHAR(50) NOT NULL,
-                    LastName NVARCHAR(50) NOT NULL,
+                    FirstName NVARCHAR(50) COLLATE Cyrillic_General_CI_AS NOT NULL,
+                    LastName NVARCHAR(50) COLLATE Cyrillic_General_CI_AS NOT NULL,
                     Email NVARCHAR(100) UNIQUE NOT NULL,
                     DateOfBirth DATETIME2 NOT NULL,
                     Salary DECIMAL(18,2) NOT NULL,
                     DepartmentId INT NULL,
-                    Position NVARCHAR(100),
+                    Position NVARCHAR(100) COLLATE Cyrillic_General_CI_AS,
                     HireDate DATETIME2 DEFAULT GETUTCDATE(),
                     TerminationDate DATETIME2 NULL,
                     IsActive BIT DEFAULT 1,
@@ -97,37 +97,37 @@ namespace Infrastructure.Data
 
             var employeesCount = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM Employees");
 
-            if (employeesCount == 0)
-            {
-                var employees = new[]
-                {
-                    new {
-                        FirstName = "Иван",
-                        LastName = "Иванов",
-                        Email = "ivan.ivanov@company.com",
-                        DateOfBirth = new DateTime(1985, 5, 15),
-                        Salary = 75000.00m,
-                        Position = "Разработчик",
-                        HireDate = DateTime.UtcNow.AddYears(-2)
-                    },
-                    new {
-                        FirstName = "Петр",
-                        LastName = "Петров",
-                        Email = "petr.petrov@company.com",
-                        DateOfBirth = new DateTime(1990, 8, 22),
-                        Salary = 65000.00m,
-                        Position = "Менеджер",
-                        HireDate = DateTime.UtcNow.AddYears(-1)
-                    }
-                };
+            //if (employeesCount == 0)
+            //{
+            //    var employees = new[]
+            //    {
+            //        new {
+            //            FirstName = "Иван-ivan",
+            //            LastName = "Иванов",
+            //            Email = "ivan.ivanov@company.com",
+            //            DateOfBirth = new DateTime(1985, 5, 15),
+            //            Salary = 75000.00m,
+            //            Position = "Разработчик",
+            //            HireDate = DateTime.UtcNow.AddYears(-2)
+            //        },
+            //        new {
+            //            FirstName = "Петр",
+            //            LastName = "Петров",
+            //            Email = "petr.petrov@company.com",
+            //            DateOfBirth = new DateTime(1990, 8, 22),
+            //            Salary = 65000.00m,
+            //            Position = "Менеджер",
+            //            HireDate = DateTime.UtcNow.AddYears(-1)
+            //        }
+            //    };
 
-                connection.Execute(@"
-                    INSERT INTO Employees (FirstName, LastName, Email, DateOfBirth, Salary, Position, HireDate)
-                    VALUES (@FirstName, @LastName, @Email, @DateOfBirth, @Salary, @Position, @HireDate)",
-                    employees);
+            //    connection.Execute(@"
+            //        INSERT INTO Employees (FirstName, LastName, Email, DateOfBirth, Salary, Position, HireDate)
+            //        VALUES (@FirstName, @LastName, @Email, @DateOfBirth, @Salary, @Position, @HireDate)",
+            //        employees);
 
-                Console.WriteLine("Тестовые данные добавлены успешно.");
-            }
+            //    Console.WriteLine("Тестовые данные добавлены успешно.");
+            //}
         }
     }
 }

@@ -6,6 +6,7 @@ namespace EmployeeManagementApp.Presentation
     using Infrastructure.Interfaces;
     using System;
     using System.Linq;
+    using System.Text;
 
     public class ConsoleUI
     {
@@ -14,8 +15,29 @@ namespace EmployeeManagementApp.Presentation
         public ConsoleUI(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
-        }
+            if (OperatingSystem.IsWindows())
+            {
+                Console.OutputEncoding = Encoding.GetEncoding(1251);
+                Console.InputEncoding = Encoding.GetEncoding(1251);
+            }
+            else
+            {
+                // Unix/Linux/macOS
+                Console.OutputEncoding = Encoding.UTF8;
+                Console.InputEncoding = Encoding.UTF8;
+                SetUnixTerminalSettings();
 
+            }
+        }
+        private static void SetUnixTerminalSettings()
+        {
+            // Установка локали для Unix-систем
+            var lang = Environment.GetEnvironmentVariable("LANG");
+            if (string.IsNullOrEmpty(lang))
+            {
+                Environment.SetEnvironmentVariable("LANG", "en_US.UTF-8");
+            }
+        }
         public void Run()
         {
             bool exit = false;
@@ -77,7 +99,8 @@ namespace EmployeeManagementApp.Presentation
                     LastName = ReadInput("Введите фамилию: "),
                     Email = ReadInput("Введите email: "),
                     DateOfBirth = ReadDate("Введите дату рождения (ГГГГ-ММ-ДД): "),
-                    Salary = ReadDecimal("Введите зарплату: ")
+                    Salary = ReadDecimal("Введите зарплату: "),
+                    HireDate = ReadDate("Введите дату приема на работу (ГГГГ-ММ-ДД): ")
                 };
 
                 int newId = _employeeService.AddEmployee(employee);
@@ -119,7 +142,7 @@ namespace EmployeeManagementApp.Presentation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n✗ Ошибка: {ex.Message}");
+                Console.WriteLine($"\nОшибка: {ex.Message}");
             }
         }
 
@@ -136,7 +159,7 @@ namespace EmployeeManagementApp.Presentation
 
                 if (employee == null)
                 {
-                    Console.WriteLine($"✗ Сотрудник с ID {employeeId} не найден.");
+                    Console.WriteLine($"Сотрудник с ID {employeeId} не найден.");
                     return;
                 }
 
@@ -160,7 +183,7 @@ namespace EmployeeManagementApp.Presentation
                 var (fieldName, prompt) = GetFieldInfo(fieldChoice);
                 if (string.IsNullOrEmpty(fieldName))
                 {
-                    Console.WriteLine("✗ Неверный выбор поля.");
+                    Console.WriteLine("Неверный выбор поля.");
                     return;
                 }
 
@@ -170,7 +193,7 @@ namespace EmployeeManagementApp.Presentation
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n✗ Ошибка: {ex.Message}");
+                Console.WriteLine($"\nОшибка: {ex.Message}");
             }
         }
 
@@ -187,13 +210,13 @@ namespace EmployeeManagementApp.Presentation
 
                 if (employee == null)
                 {
-                    Console.WriteLine($"✗ Сотрудник с ID {employeeId} не найден.");
+                    Console.WriteLine($"Сотрудник с ID {employeeId} не найден.");
                     return;
                 }
 
                 Console.WriteLine($"\nСотрудник: {employee.GetFullName()}");
                 Console.Write("\nВы уверены, что хотите удалить этого сотрудника? (да/нет): ");
-                string confirmation = Console.ReadLine()?.ToLower().Trim();
+                string confirmation = Console.ReadLine()?.ToLower(System.Globalization.CultureInfo.CurrentCulture).Trim();
 
                 if (confirmation != "да" && confirmation != "yes")
                 {
@@ -204,13 +227,13 @@ namespace EmployeeManagementApp.Presentation
                 bool rowsAffected = _employeeService.DeleteEmployee(employeeId);
 
                 if (rowsAffected)
-                    Console.WriteLine("\n✓ Сотрудник успешно удален.");
+                    Console.WriteLine("\nСотрудник успешно удален.");
                 else
-                    Console.WriteLine("\n✗ Не удалось удалить сотрудника.");
+                    Console.WriteLine("\nНе удалось удалить сотрудника.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n✗ Ошибка: {ex.Message}");
+                Console.WriteLine($"\nОшибка: {ex.Message}");
             }
         }
 
