@@ -1,7 +1,6 @@
 ﻿namespace EmployeeManagementApp.Domain
 {
     using System;
-
     public record Employee
     {
         public int EmployeeID { get; init; }

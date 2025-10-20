@@ -6,6 +6,8 @@
     using Infrastructure.Data;
     using Infrastructure.Interfaces;
     using Infrastructure.Repositories;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using System;
     public class Program
     {
@@ -13,15 +15,27 @@
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            // Конфигурация
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
 
-            // Прямое указание строки подключения (без IConfiguration)
-            string masterConnectionString = "Server=(localdb)\\MSSQLLocalDB;Database=master;Integrated Security=true;TrustServerCertificate=true;";
-            string defaultConnectionString = "Server=(localdb)\\MSSQLLocalDB;Database=EmployeeManagementDB;Integrated Security=true;TrustServerCertificate=true;";
+            var services = new ServiceCollection();
+            services.AddSingleton<IConfiguration>(configuration);
 
-            // Инициализация базы данных
-            var dbInitializer = new DatabaseInitializer(masterConnectionString);
+            services.AddTransient<DatabaseInitializer>(provider =>
+                           new DatabaseInitializer(configuration.GetConnectionString("MasterConnection")));
+
+            services.AddTransient<IEmployeeRepository>(provider =>
+                new EmployeeRepository(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddTransient<IEmployeeService, EmployeeService>();
+            services.AddTransient<ConsoleUI>();
+
+            var serviceProvider = services.BuildServiceProvider();
+
+
+            var dbInitializer = serviceProvider.GetRequiredService<DatabaseInitializer>();
             if (!dbInitializer.Initialize())
             {
                 Console.WriteLine("\nНажмите любую клавишу для выхода...");
@@ -29,16 +43,12 @@
                 return;
             }
 
-            Console.WriteLine("✓ База данных успешно инициализирована.");
-            Console.WriteLine("✓ Подключение к базе данных успешно установлено.");
+            Console.WriteLine("База данных успешно инициализирована.");
+            Console.WriteLine("Подключение к базе данных успешно установлено.");
 
-            // Dependency Injection (ручная композиция)
-            IEmployeeRepository repository = new EmployeeRepository(dbInitializer.GetConnectionString());
-            IEmployeeService service = new EmployeeService(repository);
-            ConsoleUI ui = new ConsoleUI(service);
-
-            // Запуск приложения
+            var ui = serviceProvider.GetRequiredService<ConsoleUI>();
             ui.Run();
+
         }
     }
 }

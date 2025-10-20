@@ -20,7 +20,6 @@ namespace Infrastructure.Repositories
             _configuration = configuration;
         }
 
-        // Конструктор для обратной совместимости
         public EmployeeRepository(string connectionString)
         {
             var inMemorySettings = new Dictionary<string, string> {
@@ -104,7 +103,6 @@ namespace Infrastructure.Repositories
         {
             using var connection = new SqlConnection(GetConnectionString());
 
-            // Валидация имени поля для защиты от SQL-инъекций
             var allowedFields = new[] { "FirstName", "LastName", "Email", "Position", "Salary", "DepartmentId" };
             if (!allowedFields.Contains(fieldName))
             {
@@ -113,7 +111,6 @@ namespace Infrastructure.Repositories
 
             object convertedValue = fieldValue;
 
-            // Конвертация значений в правильный тип данных
             if (fieldName == "Salary")
             {
                 if (decimal.TryParse(fieldValue, out decimal salaryValue))

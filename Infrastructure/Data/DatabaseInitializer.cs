@@ -26,7 +26,6 @@ namespace Infrastructure.Data
             {
                 CreateDatabaseIfNotExists();
                 CreateTablesIfNotExist();
-                //SeedInitialData();
                 return true;
             }
             catch (Exception ex)
@@ -38,7 +37,6 @@ namespace Infrastructure.Data
 
         public string GetConnectionString()
         {
-            // Создаем connection string на основе MasterConnection
             var builder = new SqlConnectionStringBuilder(_masterConnectionString)
             {
                 InitialCatalog = _databaseName
@@ -89,45 +87,6 @@ namespace Infrastructure.Data
 
             connection.Execute(createEmployeesTable);
             Console.WriteLine("Таблицы созданы/проверены успешно.");
-        }
-
-        private void SeedInitialData()
-        {
-            using var connection = new SqlConnection(GetConnectionString());
-
-            var employeesCount = connection.ExecuteScalar<int>("SELECT COUNT(*) FROM Employees");
-
-            //if (employeesCount == 0)
-            //{
-            //    var employees = new[]
-            //    {
-            //        new {
-            //            FirstName = "Иван-ivan",
-            //            LastName = "Иванов",
-            //            Email = "ivan.ivanov@company.com",
-            //            DateOfBirth = new DateTime(1985, 5, 15),
-            //            Salary = 75000.00m,
-            //            Position = "Разработчик",
-            //            HireDate = DateTime.UtcNow.AddYears(-2)
-            //        },
-            //        new {
-            //            FirstName = "Петр",
-            //            LastName = "Петров",
-            //            Email = "petr.petrov@company.com",
-            //            DateOfBirth = new DateTime(1990, 8, 22),
-            //            Salary = 65000.00m,
-            //            Position = "Менеджер",
-            //            HireDate = DateTime.UtcNow.AddYears(-1)
-            //        }
-            //    };
-
-            //    connection.Execute(@"
-            //        INSERT INTO Employees (FirstName, LastName, Email, DateOfBirth, Salary, Position, HireDate)
-            //        VALUES (@FirstName, @LastName, @Email, @DateOfBirth, @Salary, @Position, @HireDate)",
-            //        employees);
-
-            //    Console.WriteLine("Тестовые данные добавлены успешно.");
-            //}
         }
     }
 }

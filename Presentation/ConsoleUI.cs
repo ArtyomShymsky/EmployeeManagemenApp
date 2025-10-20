@@ -20,24 +20,13 @@ namespace EmployeeManagementApp.Presentation
                 Console.OutputEncoding = Encoding.GetEncoding(1251);
                 Console.InputEncoding = Encoding.GetEncoding(1251);
             }
-            else
+            else // Unix/Linux/macOS
             {
-                // Unix/Linux/macOS
                 Console.OutputEncoding = Encoding.UTF8;
                 Console.InputEncoding = Encoding.UTF8;
-                SetUnixTerminalSettings();
+            }
+        }
 
-            }
-        }
-        private static void SetUnixTerminalSettings()
-        {
-            // Установка локали для Unix-систем
-            var lang = Environment.GetEnvironmentVariable("LANG");
-            if (string.IsNullOrEmpty(lang))
-            {
-                Environment.SetEnvironmentVariable("LANG", "en_US.UTF-8");
-            }
-        }
         public void Run()
         {
             bool exit = false;
@@ -70,16 +59,16 @@ namespace EmployeeManagementApp.Presentation
                         case "4": DeleteEmployee(); break;
                         case "5":
                             exit = true;
-                            Console.WriteLine("\n✓ Завершение работы приложения...");
+                            Console.WriteLine("\n Завершение работы приложения...");
                             break;
                         default:
-                            Console.WriteLine("\n✗ Ошибка: Неверный выбор. Пожалуйста, выберите опцию от 1 до 5.");
+                            Console.WriteLine("\n Ошибка: Неверный выбор. Пожалуйста, выберите опцию от 1 до 5.");
                             break;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"\n✗ Произошла ошибка: {ex.Message}");
+                    Console.WriteLine($"\n Произошла ошибка: {ex.Message}");
                     Console.WriteLine("Приложение продолжит работу...");
                 }
             }
@@ -104,11 +93,11 @@ namespace EmployeeManagementApp.Presentation
                 };
 
                 int newId = _employeeService.AddEmployee(employee);
-                Console.WriteLine($"\n✓ Сотрудник успешно добавлен с ID: {newId}");
+                Console.WriteLine($"\n Сотрудник успешно добавлен с ID: {newId}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n✗ Ошибка: {ex.Message}");
+                Console.WriteLine($"\n Ошибка: {ex.Message}");
             }
         }
 
@@ -189,7 +178,7 @@ namespace EmployeeManagementApp.Presentation
 
                 string newValue = ReadInput(prompt);
                 _employeeService.UpdateEmployeeField(employeeId, fieldName, newValue);
-                Console.WriteLine("\n✓ Информация успешно обновлена.");
+                Console.WriteLine("\nИнформация успешно обновлена.");
             }
             catch (Exception ex)
             {
@@ -227,13 +216,13 @@ namespace EmployeeManagementApp.Presentation
                 bool rowsAffected = _employeeService.DeleteEmployee(employeeId);
 
                 if (rowsAffected)
-                    Console.WriteLine("\nСотрудник успешно удален.");
+                    Console.WriteLine("\n Сотрудник успешно удален.");
                 else
-                    Console.WriteLine("\nНе удалось удалить сотрудника.");
+                    Console.WriteLine("\n Не удалось удалить сотрудника.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\nОшибка: {ex.Message}");
+                Console.WriteLine($"\n Ошибка: {ex.Message}");
             }
         }
 

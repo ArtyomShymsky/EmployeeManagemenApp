@@ -5,7 +5,6 @@ namespace EmployeeManagementApp.Application.Interfaces
     using System;
     using System.Collections.Generic;
 
-
     public interface IEmployeeRepository
     {
         int Add(Employee employee);

@@ -87,7 +87,6 @@
                     throw new ArgumentException("Неверное значение зарплаты");
             }
         }
-
         public bool DeleteEmployee(int employeeId)
         {
             if (employeeId <= 0)
